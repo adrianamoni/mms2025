@@ -47,3 +47,20 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + '...';
 }
+
+/**
+ * Sanitize HTML to remove or replace private GitHub image URLs
+ * Private GitHub images require authentication and fail with 404
+ * This function replaces them with a placeholder or removes them
+ */
+export function sanitizeGitHubHTML(html: string): string {
+  if (!html) return html;
+  
+  // Replace private GitHub image URLs with a placeholder text
+  const sanitized = html.replace(
+    /<img[^>]+src="https:\/\/private-user-images\.githubusercontent\.com[^"]*"[^>]*>/gi,
+    '<p style="padding: 12px; background: #f6f8fa; border: 1px dashed #d0d7de; border-radius: 6px; color: #57606a; font-style: italic;">🖼️ [Private image - requires GitHub authentication]</p>'
+  );
+  
+  return sanitized;
+}

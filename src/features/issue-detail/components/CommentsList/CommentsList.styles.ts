@@ -92,3 +92,52 @@ export const EmptyState = styled.div`
   border: 1px dashed ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
 `;
+
+export const SearchContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+`;
+
+export const SearchInput = styled.input`
+  width: 100%;
+  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
+  font-size: ${({ theme }) => theme.typography.fontSize.base};
+  font-family: ${({ theme }) => theme.typography.fontFamily.base};
+  color: ${({ theme }) => theme.colors.text.primary};
+  background-color: ${({ theme }) => theme.colors.background.default};
+  border: 1px solid ${({ theme }) => theme.colors.border.default};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: all ${({ theme }) => theme.transitions.duration.fast} ${({ theme }) => theme.transitions.easing.ease};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.text.tertiary};
+  }
+
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.primary.main};
+    outline-offset: 0;
+    border-color: ${({ theme }) => theme.colors.primary.main};
+  }
+
+  &:hover:not(:focus) {
+    border-color: ${({ theme }) => theme.colors.border.strong};
+  }
+`;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: ${({ theme }) => theme.spacing.lg};
+  padding-top: ${({ theme }) => theme.spacing.lg};
+  border-top: 1px solid ${({ theme }) => theme.colors.border.default};
+`;
+
+export const PaginationInfo = styled.div`
+  color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+`;
+
+export const PaginationButtons = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+`;

@@ -73,7 +73,7 @@ export function useIssueDetail(issueNumber: number) {
     owner: env.GITHUB_REPO_OWNER,
     name: env.GITHUB_REPO_NAME,
     number: issueNumber,
-    commentsFirst: 20,
+    commentsFirst: 100, // Fetch more comments for frontend pagination
   }), [issueNumber]);
 
   // Query key for caching

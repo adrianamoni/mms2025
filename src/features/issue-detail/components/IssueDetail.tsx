@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useIssueDetail } from '@/features/issue-detail/hooks/useIssueDetail';
 import { Badge } from '@/shared/ui/Badge/Badge';
 import { Button } from '@/shared/ui/Button/Button';
-import { formatDate, getContrastColor } from '@/shared/utils/styling';
+import { formatDate, getContrastColor, sanitizeGitHubHTML } from '@/shared/utils/styling';
 import { CommentsList } from '@/features/issue-detail/components/CommentsList/CommentsList';
+import { CommentSkeleton } from '@/features/issue-detail/components/CommentSkeleton/CommentSkeleton';
 import * as S from '@/features/issue-detail/components/IssueDetail.styles';
 
 /**
@@ -119,6 +120,24 @@ export const IssueDetail: FC = () => {
             </S.MetadataItem>
           )}
         </S.Metadata>
+
+        {/* Labels */}
+        {issue.labels && issue.labels.nodes.length > 0 && (
+          <S.LabelsRow>
+            {issue.labels.nodes.map((label) => (
+              <Badge
+                key={label.id}
+                size="sm"
+                style={{
+                  backgroundColor: `#${label.color}`,
+                  color: getContrastColor(label.color),
+                }}
+              >
+                {label.name}
+              </Badge>
+            ))}
+          </S.LabelsRow>
+        )}
       </S.IssueHeader>
 
       <S.Content>
@@ -126,7 +145,9 @@ export const IssueDetail: FC = () => {
           {/* Issue Body */}
           <S.BodySection>
             <S.BodyContent
-              dangerouslySetInnerHTML={{ __html: issue.bodyHTML || issue.body || '<p><em>No description provided</em></p>' }}
+              dangerouslySetInnerHTML={{ 
+                __html: sanitizeGitHubHTML(issue.bodyHTML || issue.body || '<p><em>No description provided</em></p>')
+              }}
             />
           </S.BodySection>
 
@@ -135,48 +156,13 @@ export const IssueDetail: FC = () => {
             <S.SectionTitle>
               Comments ({commentsTotal})
             </S.SectionTitle>
-            <CommentsList comments={comments} />
+            {isLoading ? (
+              <CommentSkeleton count={3} />
+            ) : (
+              <CommentsList comments={comments} isLoading={isLoading} />
+            )}
           </S.CommentsSection>
         </S.MainContent>
-
-        {/* Sidebar */}
-        <S.Sidebar>
-          {/* Labels */}
-          {issue.labels && issue.labels.nodes.length > 0 && (
-            <S.SidebarSection>
-              <S.SidebarTitle>Labels</S.SidebarTitle>
-              <S.LabelsList>
-                {issue.labels.nodes.map((label) => (
-                  <Badge
-                    key={label.id}
-                    size="sm"
-                    style={{
-                      backgroundColor: `#${label.color}`,
-                      color: getContrastColor(label.color),
-                    }}
-                  >
-                    {label.name}
-                  </Badge>
-                ))}
-              </S.LabelsList>
-            </S.SidebarSection>
-          )}
-
-          {/* Assignees */}
-          {issue.assignees && issue.assignees.nodes.length > 0 && (
-            <S.SidebarSection>
-              <S.SidebarTitle>Assignees</S.SidebarTitle>
-              <S.AssigneesList>
-                {issue.assignees.nodes.map((assignee) => (
-                  <S.Assignee key={assignee.login}>
-                    <S.AssigneeAvatar src={assignee.avatarUrl} alt={assignee.login} />
-                    <S.AssigneeName>{assignee.login}</S.AssigneeName>
-                  </S.Assignee>
-                ))}
-              </S.AssigneesList>
-            </S.SidebarSection>
-          )}
-        </S.Sidebar>
       </S.Content>
     </S.Container>
   );

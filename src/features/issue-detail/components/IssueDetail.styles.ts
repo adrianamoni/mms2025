@@ -76,25 +76,20 @@ export const Avatar = styled.img`
   border-radius: 50%;
 `;
 
-export const Content = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: ${({ theme }) => theme.spacing.xl};
-  margin-top: ${({ theme }) => theme.spacing.xl};
+export const LabelsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  flex-wrap: wrap;
+  margin-top: ${({ theme }) => theme.spacing.md};
+`;
 
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-  }
+export const Content = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.xl};
 `;
 
 export const MainContent = styled.div`
-  min-width: 0;
-`;
-
-export const Sidebar = styled.aside`
-  @media (max-width: 968px) {
-    order: -1;
-  }
+  width: 100%;
 `;
 
 export const BodySection = styled.section`
@@ -144,52 +139,6 @@ export const SectionTitle = styled.h2`
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
   margin: 0 0 ${({ theme }) => theme.spacing.lg} 0;
-`;
-
-export const SidebarSection = styled.div`
-  padding: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.background.paper};
-  border: 1px solid ${({ theme }) => theme.colors.border.default};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-export const SidebarTitle = styled.h3`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text.secondary};
-  margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-`;
-
-export const LabelsList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.xs};
-`;
-
-export const AssigneesList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-export const Assignee = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-export const AssigneeAvatar = styled.img`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-`;
-
-export const AssigneeName = styled.span`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
-  color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 export const LoadingContainer = styled.div`
