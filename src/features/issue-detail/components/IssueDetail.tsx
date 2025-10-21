@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useIssueDetail } from '@/features/issue-detail/hooks/useIssueDetail';
 import { Badge } from '@/shared/ui/Badge/Badge';
@@ -6,6 +6,8 @@ import { Button } from '@/shared/ui/Button/Button';
 import { formatDate, getContrastColor, sanitizeGitHubHTML } from '@/shared/utils/styling';
 import { CommentsList } from '@/features/issue-detail/components/CommentsList/CommentsList';
 import { CommentSkeleton } from '@/features/issue-detail/components/CommentSkeleton/CommentSkeleton';
+import { ContentSkeleton } from '@/shared/ui/components/Skeleton/ContentSkeleton';
+import { IssueDetailSkeleton } from '@/shared/ui/components/Skeleton/IssueDetailSkeleton';
 import * as S from '@/features/issue-detail/components/IssueDetail.styles';
 
 /**
@@ -26,6 +28,11 @@ export const IssueDetail: FC = () => {
     isFetching,
     error,
   } = useIssueDetail(issueNum);
+
+  // Scroll to top immediately when component mounts or issue number changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [issueNum]);
 
   const handleBack = () => {
     navigate(-1);
@@ -54,9 +61,7 @@ export const IssueDetail: FC = () => {
         <S.BackButton onClick={handleBack}>
           ← Back
         </S.BackButton>
-        <S.LoadingContainer>
-          <p>Loading issue...</p>
-        </S.LoadingContainer>
+        <IssueDetailSkeleton />
       </S.Container>
     );
   }
@@ -145,11 +150,15 @@ export const IssueDetail: FC = () => {
         <S.MainContent>
           {/* Issue Body */}
           <S.BodySection>
-            <S.BodyContent
-              dangerouslySetInnerHTML={{ 
-                __html: sanitizeGitHubHTML(issue.bodyHTML || issue.body || '<p><em>No description provided</em></p>')
-              }}
-            />
+            {isFetching && !issue.bodyHTML ? (
+              <ContentSkeleton blocks={3} includeCodeBlock />
+            ) : (
+              <S.BodyContent
+                dangerouslySetInnerHTML={{ 
+                  __html: sanitizeGitHubHTML(issue.bodyHTML || issue.body || '<p><em>No description provided</em></p>')
+                }}
+              />
+            )}
           </S.BodySection>
 
           {/* Comments */}

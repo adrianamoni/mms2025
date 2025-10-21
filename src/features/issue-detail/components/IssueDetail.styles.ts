@@ -98,11 +98,23 @@ export const BodySection = styled.section`
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
+  min-height: 200px;
+  transition: opacity ${({ theme }) => theme.transitions.duration.base} ${({ theme }) => theme.transitions.easing.ease};
 `;
 
 export const BodyContent = styled.div`
   color: ${({ theme }) => theme.colors.text.primary};
   line-height: 1.6;
+  animation: fadeIn ${({ theme }) => theme.transitions.duration.base} ${({ theme }) => theme.transitions.easing.ease};
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
   
   /* Markdown styling */
   p {
