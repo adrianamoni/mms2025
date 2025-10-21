@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSearchIssues } from '../hooks/useSearchIssues';
 import type { IssueState } from '@/shared/api/github-queries';
 import { Button } from '@/shared/ui/Button/Button';
@@ -12,6 +13,8 @@ import * as S from './IssueSearchDemo.styles';
  * Displays a searchable/filterable list of GitHub issues with pagination
  */
 export const IssueSearchDemo: React.FC = () => {
+  const navigate = useNavigate();
+  
   const {
     issues,
     totalCount,
@@ -36,6 +39,10 @@ export const IssueSearchDemo: React.FC = () => {
 
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setState(e.target.value as IssueState | 'ALL');
+  };
+
+  const handleIssueClick = (issueNumber: number) => {
+    navigate(`/issues/${issueNumber}`);
   };
 
   if (error) {
@@ -99,7 +106,10 @@ export const IssueSearchDemo: React.FC = () => {
       {!isLoading && issues.length > 0 && (
         <S.IssuesList>
           {issues.map((issue) => (
-            <S.IssueCardContainer key={issue.id}>
+            <S.IssueCardContainer 
+              key={issue.id}
+              onClick={() => handleIssueClick(issue.number)}
+            >
               <S.IssueHeader>
                 <Badge variant={issue.state === 'OPEN' ? 'open' : 'closed'} size="sm">
                   {issue.state}

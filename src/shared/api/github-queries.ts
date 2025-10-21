@@ -72,6 +72,77 @@ export const SEARCH_ISSUES = gql`
   }
 `;
 
+// GraphQL query to get issue detail with comments
+export const GET_ISSUE_DETAIL = gql`
+  query GetIssueDetail(
+    $owner: String!
+    $name: String!
+    $number: Int!
+    $commentsFirst: Int!
+    $commentsAfter: String
+  ) {
+    repository(owner: $owner, name: $name) {
+      issue(number: $number) {
+        id
+        number
+        title
+        body
+        bodyHTML
+        state
+        createdAt
+        updatedAt
+        closedAt
+        author {
+          login
+          avatarUrl
+          url
+        }
+        labels(first: 20) {
+          nodes {
+            id
+            name
+            color
+            description
+          }
+        }
+        assignees(first: 10) {
+          nodes {
+            login
+            avatarUrl
+            url
+          }
+        }
+        comments(first: $commentsFirst, after: $commentsAfter) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          edges {
+            node {
+              id
+              body
+              bodyHTML
+              createdAt
+              updatedAt
+              author {
+                login
+                avatarUrl
+                url
+              }
+            }
+          }
+        }
+        reactions {
+          totalCount
+        }
+      }
+    }
+  }
+`;
+
 // GraphQL query to search issues by text using GitHub Search API
 export const SEARCH_ISSUES_BY_TEXT = gql`
   query SearchIssuesByText(
@@ -237,7 +308,44 @@ export type IssueComment = {
   author: {
     login: string;
     avatarUrl: string;
+    url?: string;
   } | null;
+};
+
+export type IssueDetail = {
+  id: string;
+  number: number;
+  title: string;
+  body: string;
+  bodyHTML: string;
+  state: IssueState;
+  createdAt: string;
+  updatedAt: string;
+  closedAt: string | null;
+  author: {
+    login: string;
+    avatarUrl: string;
+    url?: string;
+  } | null;
+  labels: {
+    nodes: Array<{
+      id: string;
+      name: string;
+      color: string;
+      description: string | null;
+    }>;
+  };
+  assignees: {
+    nodes: Array<{
+      login: string;
+      avatarUrl: string;
+      url?: string;
+    }>;
+  };
+  comments: CommentsConnection;
+  reactions: {
+    totalCount: number;
+  };
 };
 
 export type PageInfo = {

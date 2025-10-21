@@ -104,6 +104,7 @@ export const IssueCardContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   transition: all ${({ theme }) => theme.transitions.duration.base} ${({ theme }) => theme.transitions.easing.ease};
+  cursor: pointer;
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.border.strong};
