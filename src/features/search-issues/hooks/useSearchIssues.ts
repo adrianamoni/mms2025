@@ -1,7 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useGraphQLQuery } from '@/shared/hooks/useGraphQL';
 import { SEARCH_ISSUES, SEARCH_ISSUES_BY_TEXT } from '@/shared/api/github-queries';
-import { queryKeys } from '@/shared/api/query-client';
 import { env } from '@/shared/config/env';
 import type { IssueSearchFilters } from '../types/filters';
 import { DEFAULT_SEARCH_FILTERS } from '../types/filters';
@@ -90,6 +89,9 @@ type SearchByTextVariables = {
 export function useSearchIssues() {
   // Local state for filters
   const [filters, setFilters] = useState<IssueSearchFilters>(DEFAULT_SEARCH_FILTERS);
+  
+  // History of cursors for backward navigation
+  const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>([undefined]);
 
   // Determine if we need to use text search
   const hasSearchTerm = filters.searchTerm.trim().length > 0;
@@ -130,18 +132,29 @@ export function useSearchIssues() {
     };
   }, [filters]);
 
-  // Use the appropriate query based on whether there's a search term
-  const { data, isLoading, error, refetch, isFetching } = useGraphQLQuery(
-    queryKeys.github.issues(
+  // Create a unique query key that changes when cursor changes
+  const queryKey = useMemo(() => {
+    return [
+      'github',
+      'repository',
       env.GITHUB_REPO_OWNER,
       env.GITHUB_REPO_NAME,
-      { state: filters.state, search: filters.searchTerm, cursor: filters.cursor }
-    ),
+      'issues',
+      filters.state,
+      filters.searchTerm,
+      filters.cursor || 'initial', // Ensure cursor is part of the key
+      filters.pageSize,
+    ];
+  }, [filters.state, filters.searchTerm, filters.cursor, filters.pageSize]);
+
+  // Use the appropriate query based on whether there's a search term
+  const { data, isLoading, error, refetch, isFetching } = useGraphQLQuery(
+    queryKey,
     hasSearchTerm ? SEARCH_ISSUES_BY_TEXT : SEARCH_ISSUES,
     hasSearchTerm ? searchVariables : repoVariables,
     {
-      placeholderData: (previousData) => previousData,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes - use cache for better performance
     }
   );
 
@@ -160,6 +173,8 @@ export function useSearchIssues() {
 
   // Update search term
   const setSearchTerm = useCallback((searchTerm: string) => {
+    // Reset cursor history when search changes
+    setCursorHistory([undefined]);
     setFilters(prev => ({
       ...prev,
       searchTerm,
@@ -169,6 +184,8 @@ export function useSearchIssues() {
 
   // Update issue state filter
   const setState = useCallback((state: IssueState | 'ALL') => {
+    // Reset cursor history when filter changes
+    setCursorHistory([undefined]);
     setFilters(prev => ({
       ...prev,
       state,
@@ -179,29 +196,35 @@ export function useSearchIssues() {
   // Load next page
   const loadNextPage = useCallback(() => {
     if (pageInfo?.hasNextPage && pageInfo.endCursor) {
+      // Add current cursor to history before moving forward
+      setCursorHistory(prev => [...prev, pageInfo.endCursor!]);
+      
       setFilters(prev => ({
         ...prev,
         cursor: pageInfo.endCursor!,
       }));
-      // Trigger refetch after updating cursor
-      setTimeout(() => refetch(), 0);
     }
-  }, [pageInfo, refetch]);
+  }, [pageInfo]);
 
   // Load previous page
   const loadPreviousPage = useCallback(() => {
-    if (pageInfo?.hasPreviousPage && pageInfo.startCursor) {
+    if (cursorHistory.length > 1) {
+      // Remove the last cursor from history
+      const newHistory = [...cursorHistory];
+      newHistory.pop(); // Remove current page cursor
+      const previousCursor = newHistory[newHistory.length - 1];
+      
+      setCursorHistory(newHistory);
       setFilters(prev => ({
         ...prev,
-        cursor: pageInfo.startCursor!,
+        cursor: previousCursor,
       }));
-      // Trigger refetch after updating cursor
-      setTimeout(() => refetch(), 0);
     }
-  }, [pageInfo, refetch]);
+  }, [cursorHistory]);
 
   // Reset all filters
   const resetFilters = useCallback(() => {
+    setCursorHistory([undefined]);
     setFilters(DEFAULT_SEARCH_FILTERS);
   }, []);
 
@@ -223,7 +246,7 @@ export function useSearchIssues() {
     // Pagination
     pageInfo,
     hasNextPage: pageInfo?.hasNextPage || false,
-    hasPreviousPage: pageInfo?.hasPreviousPage || false,
+    hasPreviousPage: cursorHistory.length > 1, // Based on history, not GraphQL pageInfo
     
     // Loading states
     isLoading,

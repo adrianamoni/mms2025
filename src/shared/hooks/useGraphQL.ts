@@ -25,7 +25,7 @@ export function useGraphQLQuery<TData = unknown, TVariables = Variables>(
         query,
         variables: variables as Record<string, unknown>,
         errorPolicy: 'all',
-        fetchPolicy: options?.enabled === false ? 'cache-only' : 'cache-first',
+        fetchPolicy: 'cache-first', // Use cache when available
       });
 
       if (result.error) {

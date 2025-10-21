@@ -25,19 +25,26 @@ const authLink = new SetContextLink((prevContext) => {
 // Cache configuration
 const cache = new InMemoryCache({
   typePolicies: {
+    Query: {
+      fields: {
+        search: {
+          // Include 'after' cursor in key to cache each page separately
+          keyArgs: ['query', 'type', 'first', 'after'],
+          // Replace data (don't merge) since each page is independent
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
     Repository: {
       fields: {
         issues: {
-          keyArgs: ['states', 'filterBy'],
-          merge(existing, incoming, { args }) {
-            if (!existing || !args || args.after === undefined) {
-              return incoming;
-            }
-            
-            return {
-              ...incoming,
-              edges: [...(existing.edges || []), ...(incoming.edges || [])],
-            };
+          // Include 'after' cursor in key to cache each page separately
+          keyArgs: ['states', 'filterBy', 'first', 'after'],
+          // Replace data (don't merge) since each page is independent
+          merge(_existing, incoming) {
+            return incoming;
           },
         },
       },
@@ -45,16 +52,10 @@ const cache = new InMemoryCache({
     Issue: {
       fields: {
         comments: {
-          keyArgs: [],
-          merge(existing, incoming, { args }) {
-            if (!existing || !args || args.after === undefined) {
-              return incoming;
-            }
-            
-            return {
-              ...incoming,
-              edges: [...(existing.edges || []), ...(incoming.edges || [])],
-            };
+          keyArgs: ['first', 'after'],
+          // Replace data (don't merge)
+          merge(_existing, incoming) {
+            return incoming;
           },
         },
       },
