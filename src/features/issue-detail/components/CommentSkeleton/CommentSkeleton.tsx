@@ -15,17 +15,18 @@ export const CommentSkeleton: FC<CommentSkeletonProps> = ({ count = 3 }) => {
       {Array.from({ length: count }).map((_, index) => (
         <S.SkeletonCommentCard key={index}>
           <S.SkeletonHeader>
-            <S.SkeletonAvatar $size="32px" />
+            <S.SkeletonAvatar $size="40px" />
             <S.SkeletonAuthorInfo>
-              <S.SkeletonLine $width="120px" $height="14px" />
-              <S.SkeletonLine $width="180px" $height="12px" />
+              <S.SkeletonLine $width="140px" $height="16px" />
+              <S.SkeletonLine $width="200px" $height="14px" />
             </S.SkeletonAuthorInfo>
           </S.SkeletonHeader>
 
           <S.SkeletonBody>
-            <S.SkeletonLine $height="14px" />
-            <S.SkeletonLine $height="14px" />
-            <S.SkeletonLine $height="14px" />
+            <S.SkeletonLine $height="16px" />
+            <S.SkeletonLine $height="16px" />
+            <S.SkeletonLine $height="16px" />
+            <S.SkeletonLine $height="16px" />
           </S.SkeletonBody>
         </S.SkeletonCommentCard>
       ))}

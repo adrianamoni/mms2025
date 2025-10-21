@@ -1,11 +1,17 @@
 import styled from 'styled-components';
 
 export const CommentCard = styled.article`
-  padding: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
   background: ${({ theme }) => theme.colors.background.default};
   border: 1px solid ${({ theme }) => theme.colors.border.default};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  transition: all ${({ theme }) => theme.transitions.duration.base} ${({ theme }) => theme.transitions.easing.ease};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.border.strong};
+    box-shadow: ${({ theme }) => theme.shadows.sm};
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -14,56 +20,74 @@ export const CommentCard = styled.article`
 
 export const CommentHeader = styled.header`
   display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
   padding-bottom: ${({ theme }) => theme.spacing.md};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border.subtle};
 `;
 
 export const Avatar = styled.img`
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  border: 2px solid ${({ theme }) => theme.colors.border.subtle};
+  flex-shrink: 0;
 `;
 
 export const AuthorInfo = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.xs};
 `;
 
 export const AuthorName = styled.strong`
-  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-size: ${({ theme }) => theme.typography.fontSize.base};
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
 `;
 
 export const CommentDate = styled.span`
-  font-size: ${({ theme }) => theme.typography.fontSize.xs};
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
   color: ${({ theme }) => theme.colors.text.tertiary};
-  margin-left: ${({ theme }) => theme.spacing.sm};
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+  
+  &::before {
+    content: '💬';
+  }
 `;
 
 export const CommentBody = styled.div`
-  color: ${({ theme }) => theme.colors.text.primary};
-  line-height: 1.6;
+  color: ${({ theme }) => theme.colors.text.secondary};
+  line-height: ${({ theme }) => theme.typography.lineHeight.relaxed};
   font-size: ${({ theme }) => theme.typography.fontSize.base};
 
   /* Markdown styling */
   p {
-    margin: ${({ theme }) => theme.spacing.sm} 0;
+    margin: ${({ theme }) => theme.spacing.md} 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   code {
     padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.sm}`};
-    background: ${({ theme }) => theme.colors.background.paper};
+    background: ${({ theme }) => theme.colors.background.subtle};
+    border: 1px solid ${({ theme }) => theme.colors.border.subtle};
     border-radius: ${({ theme }) => theme.borderRadius.sm};
-    font-family: ${({ theme }) => theme.typography.fontFamily.mono};
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.9em;
+    color: ${({ theme }) => theme.colors.text.primary};
   }
 
   pre {
-    padding: ${({ theme }) => theme.spacing.md};
-    background: ${({ theme }) => theme.colors.background.paper};
+    padding: ${({ theme }) => theme.spacing.lg};
+    background: ${({ theme }) => theme.colors.background.subtle};
+    border: 1px solid ${({ theme }) => theme.colors.border.subtle};
     border-radius: ${({ theme }) => theme.borderRadius.md};
     overflow-x: auto;
     margin: ${({ theme }) => theme.spacing.md} 0;
@@ -71,16 +95,50 @@ export const CommentBody = styled.div`
     code {
       padding: 0;
       background: none;
+      border: none;
     }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    margin: ${({ theme }) => theme.spacing.md} 0;
+    box-shadow: ${({ theme }) => theme.shadows.sm};
+  }
+
+  blockquote {
+    border-left: 3px solid ${({ theme }) => theme.colors.border.strong};
+    padding-left: ${({ theme }) => theme.spacing.md};
+    margin: ${({ theme }) => theme.spacing.md} 0;
+    color: ${({ theme }) => theme.colors.text.tertiary};
+  }
+
+  ul, ol {
+    padding-left: ${({ theme }) => theme.spacing.xl};
+    margin: ${({ theme }) => theme.spacing.md} 0;
+  }
+
+  li {
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
   }
 
   a {
     color: ${({ theme }) => theme.colors.primary.main};
     text-decoration: none;
+    font-weight: ${({ theme }) => theme.typography.fontWeight.medium};
 
     &:hover {
       text-decoration: underline;
+      color: ${({ theme }) => theme.colors.primary.light};
     }
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: ${({ theme }) => theme.spacing.lg};
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+    font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
+    color: ${({ theme }) => theme.colors.text.primary};
   }
 `;
 

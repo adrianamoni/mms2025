@@ -6,7 +6,6 @@ import * as S from './CommentsList.styles';
 
 type CommentsListProps = {
   comments: IssueComment[];
-  isLoading?: boolean;
 };
 
 const COMMENTS_PER_PAGE = 10;
@@ -15,7 +14,7 @@ const COMMENTS_PER_PAGE = 10;
  * CommentsList Component
  * Displays a list of issue comments with author info, search, and pagination
  */
-export const CommentsList: FC<CommentsListProps> = ({ comments, isLoading = false }) => {
+export const CommentsList: FC<CommentsListProps> = ({ comments }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -58,7 +57,7 @@ export const CommentsList: FC<CommentsListProps> = ({ comments, isLoading = fals
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  if (comments.length === 0 && !isLoading) {
+  if (comments.length === 0) {
     return (
       <S.EmptyState>
         <p>💬 No comments yet</p>

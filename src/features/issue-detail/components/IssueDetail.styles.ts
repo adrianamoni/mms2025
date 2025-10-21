@@ -139,6 +139,25 @@ export const SectionTitle = styled.h2`
   font-weight: ${({ theme }) => theme.typography.fontWeight.semibold};
   color: ${({ theme }) => theme.colors.text.primary};
   margin: 0 0 ${({ theme }) => theme.spacing.lg} 0;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+export const LoadingIndicator = styled.span`
+  font-size: ${({ theme }) => theme.typography.fontSize.sm};
+  font-weight: ${({ theme }) => theme.typography.fontWeight.normal};
+  color: ${({ theme }) => theme.colors.text.tertiary};
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 `;
 
 export const LoadingContainer = styled.div`

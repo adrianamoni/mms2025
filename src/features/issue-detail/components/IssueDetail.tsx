@@ -23,6 +23,7 @@ export const IssueDetail: FC = () => {
     comments,
     commentsTotal,
     isLoading,
+    isFetching,
     error,
   } = useIssueDetail(issueNum);
 
@@ -154,12 +155,15 @@ export const IssueDetail: FC = () => {
           {/* Comments */}
           <S.CommentsSection>
             <S.SectionTitle>
-              Comments ({commentsTotal})
+              Comments ({isFetching && comments.length === 0 ? '...' : commentsTotal})
+              {isFetching && comments.length > 0 && (
+                <S.LoadingIndicator>Updating...</S.LoadingIndicator>
+              )}
             </S.SectionTitle>
-            {isLoading ? (
+            {isFetching && comments.length === 0 ? (
               <CommentSkeleton count={3} />
             ) : (
-              <CommentsList comments={comments} isLoading={isLoading} />
+              <CommentsList comments={comments} />
             )}
           </S.CommentsSection>
         </S.MainContent>
