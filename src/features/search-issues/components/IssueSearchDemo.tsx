@@ -1,9 +1,14 @@
 import React from 'react';
 import { useSearchIssues } from '../hooks/useSearchIssues';
 import type { IssueState } from '@/shared/api/github-queries';
+import { Button } from '@/shared/ui/Button/Button';
+import { Badge } from '@/shared/ui/Badge/Badge';
+import { getContrastColor, formatDate } from '@/shared/utils/styling';
+import * as S from './IssueSearchDemo.styles';
 
 /**
- * Component to test the search issues functionality
+ * Issues Search and List Component
+ * Displays a searchable/filterable list of GitHub issues with pagination
  */
 export const IssueSearchDemo: React.FC = () => {
   const {
@@ -34,223 +39,142 @@ export const IssueSearchDemo: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{ padding: '20px', backgroundColor: '#fee', borderRadius: '8px' }}>
-        <h3>Error loading issues</h3>
-        <p>{error.message}</p>
-        <button onClick={refresh}>Try Again</button>
-      </div>
+      <S.Container>
+        <S.ErrorContainer>
+          <h3>Error loading issues</h3>
+          <p>{error.message}</p>
+          <Button onClick={refresh} variant="danger">
+            Try Again
+          </Button>
+        </S.ErrorContainer>
+      </S.Container>
     );
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>GitHub Issues Explorer</h1>
+    <S.Container>
+      <S.Title>GitHub Issues Explorer</S.Title>
       
       {/* Search Filters */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '10px', 
-        marginBottom: '20px',
-        padding: '15px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '8px'
-      }}>
-        <input
+      <S.FiltersContainer>
+        <S.SearchInput
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
           placeholder="Search issues..."
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            fontSize: '14px',
-            border: '1px solid #ddd',
-            borderRadius: '4px'
-          }}
         />
         
-        <select
-          value={state}
-          onChange={handleStateChange}
-          style={{
-            padding: '8px 12px',
-            fontSize: '14px',
-            border: '1px solid #ddd',
-            borderRadius: '4px'
-          }}
-        >
+        <S.Select value={state} onChange={handleStateChange}>
           <option value="ALL">All States</option>
           <option value="OPEN">Open</option>
           <option value="CLOSED">Closed</option>
-        </select>
+        </S.Select>
         
-        <button
-          onClick={resetFilters}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <Button onClick={resetFilters} variant="secondary">
           Reset
-        </button>
+        </Button>
         
-        <button
-          onClick={refresh}
-          disabled={isFetching}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isFetching ? 'not-allowed' : 'pointer',
-            opacity: isFetching ? 0.6 : 1
-          }}
-        >
+        <Button onClick={refresh} disabled={isFetching} variant="primary">
           {isFetching ? 'Refreshing...' : 'Refresh'}
-        </button>
-      </div>
+        </Button>
+      </S.FiltersContainer>
 
       {/* Results Count */}
-      <div style={{ marginBottom: '15px', color: '#666' }}>
+      <S.ResultsCount>
         <strong>Total Issues:</strong> {totalCount.toLocaleString()}
         {isFetching && ' (loading...)'}
-      </div>
+      </S.ResultsCount>
 
       {/* Loading State */}
       {isLoading && (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
+        <S.LoadingContainer>
           <p>Loading issues...</p>
-        </div>
+        </S.LoadingContainer>
       )}
 
       {/* Issues List */}
       {!isLoading && issues.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <S.IssuesList>
           {issues.map((issue) => (
-            <div
-              key={issue.id}
-              style={{
-                padding: '15px',
-                backgroundColor: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <span style={{
-                  padding: '2px 8px',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  backgroundColor: issue.state === 'OPEN' ? '#28a745' : '#6f42c1',
-                  color: 'white',
-                  borderRadius: '12px'
-                }}>
+            <S.IssueCardContainer key={issue.id}>
+              <S.IssueHeader>
+                <Badge variant={issue.state === 'OPEN' ? 'open' : 'closed'} size="sm">
                   {issue.state}
-                </span>
-                <strong style={{ fontSize: '16px' }}>
-                  #{issue.number} - {issue.title}
-                </strong>
-              </div>
+                </Badge>
+                <S.IssueNumber>#{issue.number}</S.IssueNumber>
+              </S.IssueHeader>
+              
+              <S.IssueTitle>{issue.title}</S.IssueTitle>
               
               {issue.body && (
-                <p style={{ 
-                  margin: '10px 0', 
-                  color: '#666',
-                  fontSize: '14px',
-                  maxHeight: '60px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}>
-                  {issue.body.slice(0, 200)}...
-                </p>
+                <S.IssueBody>
+                  {issue.body}
+                </S.IssueBody>
               )}
               
-              <div style={{ display: 'flex', gap: '15px', fontSize: '12px', color: '#999' }}>
-                <span>👤 {issue.author?.login || 'Unknown'}</span>
-                <span>💬 {issue.comments.totalCount} comments</span>
-                <span>🕒 {new Date(issue.createdAt).toLocaleDateString()}</span>
-              </div>
+              <S.IssueMetadata>
+                <S.MetadataItem>
+                  <span>👤</span>
+                  <span>{issue.author?.login || 'Unknown'}</span>
+                </S.MetadataItem>
+                <S.MetadataItem>
+                  <span>💬</span>
+                  <span>{issue.comments.totalCount} comments</span>
+                </S.MetadataItem>
+                <S.MetadataItem>
+                  <span>🕒</span>
+                  <span>{formatDate(issue.createdAt)}</span>
+                </S.MetadataItem>
+              </S.IssueMetadata>
               
               {issue.labels.nodes.length > 0 && (
-                <div style={{ display: 'flex', gap: '5px', marginTop: '8px', flexWrap: 'wrap' }}>
+                <S.LabelsContainer>
                   {issue.labels.nodes.map((label) => (
-                    <span
+                    <Badge
                       key={label.id}
-                      style={{
-                        padding: '2px 8px',
-                        fontSize: '11px',
+                      size="sm"
+                      style={{ 
                         backgroundColor: `#${label.color}`,
-                        color: 'white',
-                        borderRadius: '3px'
+                        color: getContrastColor(label.color)
                       }}
                     >
                       {label.name}
-                    </span>
+                    </Badge>
                   ))}
-                </div>
+                </S.LabelsContainer>
               )}
-            </div>
+            </S.IssueCardContainer>
           ))}
-        </div>
+        </S.IssuesList>
       )}
 
       {/* No Results */}
       {!isLoading && issues.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+        <S.NoResults>
           <p>No issues found</p>
-        </div>
+        </S.NoResults>
       )}
 
       {/* Pagination */}
       {issues.length > 0 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '10px',
-          marginTop: '20px',
-          padding: '15px'
-        }}>
-          <button
+        <S.PaginationContainer>
+          <Button
             onClick={loadPreviousPage}
             disabled={!hasPreviousPage || isFetching}
-            style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              backgroundColor: hasPreviousPage ? '#007bff' : '#ccc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: hasPreviousPage && !isFetching ? 'pointer' : 'not-allowed'
-            }}
+            variant="outline"
           >
             ← Previous
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={loadNextPage}
             disabled={!hasNextPage || isFetching}
-            style={{
-              padding: '8px 16px',
-              fontSize: '14px',
-              backgroundColor: hasNextPage ? '#007bff' : '#ccc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: hasNextPage && !isFetching ? 'pointer' : 'not-allowed'
-            }}
+            variant="primary"
           >
             Next →
-          </button>
-        </div>
+          </Button>
+        </S.PaginationContainer>
       )}
-    </div>
+    </S.Container>
   );
 };
