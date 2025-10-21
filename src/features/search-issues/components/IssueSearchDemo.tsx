@@ -17,7 +17,6 @@ export const IssueSearchDemo: React.FC = () => {
   
   const {
     issues,
-    totalCount,
     searchTerm,
     state,
     isLoading,
@@ -86,12 +85,6 @@ export const IssueSearchDemo: React.FC = () => {
           {isFetching ? 'Refreshing...' : 'Refresh'}
         </Button>
       </S.FiltersContainer>
-
-      {/* Results Count */}
-      <S.ResultsCount>
-        <strong>Total Issues:</strong> {totalCount.toLocaleString()}
-        {isFetching && ' (loading...)'}
-      </S.ResultsCount>
 
       {/* Loading State - Show skeleton cards */}
       {isLoading && (
