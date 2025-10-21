@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useGraphQLQuery } from '@/shared/hooks/useGraphQL';
+import { useDebounce } from '@/shared/hooks/useDebounce';
 import { SEARCH_ISSUES, SEARCH_ISSUES_BY_TEXT } from '@/shared/api/github-queries';
 import { env } from '@/shared/config/env';
 import type { IssueSearchFilters } from '../types/filters';
@@ -93,8 +94,11 @@ export function useSearchIssues() {
   // History of cursors for backward navigation
   const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>([undefined]);
 
+  // Debounce the search term to avoid excessive API calls while typing
+  const debouncedSearchTerm = useDebounce(filters.searchTerm, 500);
+
   // Determine if we need to use text search
-  const hasSearchTerm = filters.searchTerm.trim().length > 0;
+  const hasSearchTerm = debouncedSearchTerm.trim().length > 0;
 
   // Prepare variables for repository issues query (no text search)
   const repoVariables = useMemo<SearchIssuesVariables>(() => {
@@ -118,7 +122,7 @@ export function useSearchIssues() {
   // Prepare variables for text search query
   const searchVariables = useMemo<SearchByTextVariables>(() => {
     // Build GitHub search query string
-    let searchQuery = `repo:${env.GITHUB_REPO_OWNER}/${env.GITHUB_REPO_NAME} is:issue ${filters.searchTerm.trim()}`;
+    let searchQuery = `repo:${env.GITHUB_REPO_OWNER}/${env.GITHUB_REPO_NAME} is:issue ${debouncedSearchTerm.trim()}`;
     
     if (filters.state !== 'ALL') {
       searchQuery += ` is:${filters.state.toLowerCase()}`;
@@ -130,7 +134,7 @@ export function useSearchIssues() {
       after: filters.cursor,
       type: 'ISSUE',
     };
-  }, [filters]);
+  }, [debouncedSearchTerm, filters.state, filters.pageSize, filters.cursor]);
 
   // Create a unique query key that changes when cursor changes
   const queryKey = useMemo(() => {
@@ -141,11 +145,11 @@ export function useSearchIssues() {
       env.GITHUB_REPO_NAME,
       'issues',
       filters.state,
-      filters.searchTerm,
+      debouncedSearchTerm,
       filters.cursor || 'initial', // Ensure cursor is part of the key
       filters.pageSize,
     ];
-  }, [filters.state, filters.searchTerm, filters.cursor, filters.pageSize]);
+  }, [filters.state, debouncedSearchTerm, filters.cursor, filters.pageSize]);
 
   // Use the appropriate query based on whether there's a search term
   const { data, isLoading, error, refetch, isFetching } = useGraphQLQuery(

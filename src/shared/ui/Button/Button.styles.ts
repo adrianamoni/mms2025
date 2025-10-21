@@ -11,7 +11,17 @@ type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
- * Button Props
+ * Button Props for styled-component
+ * Using transient props ($) to prevent them from being passed to DOM
+ */
+export type StyledButtonProps = {
+  $variant?: ButtonVariant;
+  $size?: ButtonSize;
+  $fullWidth?: boolean;
+};
+
+/**
+ * Button Props for React component
  */
 export type ButtonProps = {
   variant?: ButtonVariant;
@@ -139,7 +149,7 @@ const getSizeStyles = (size: ButtonSize) => {
 /**
  * Button Component
  */
-export const Button = styled.button<ButtonProps>`
+export const Button = styled.button<StyledButtonProps>`
   /* Base styles */
   display: inline-flex;
   align-items: center;
@@ -159,14 +169,14 @@ export const Button = styled.button<ButtonProps>`
   transition: all ${({ theme }) => theme.transitions.duration.fast} ${({ theme }) => theme.transitions.easing.ease};
 
   /* Variant styles */
-  ${({ variant = 'primary' }) => getVariantStyles(variant)}
+  ${({ $variant = 'primary' }) => getVariantStyles($variant)}
 
   /* Size styles */
-  ${({ size = 'md' }) => getSizeStyles(size)}
+  ${({ $size = 'md' }) => getSizeStyles($size)}
 
   /* Full width */
-  ${({ fullWidth }) =>
-    fullWidth &&
+  ${({ $fullWidth }) =>
+    $fullWidth &&
     css`
       width: 100%;
     `}
@@ -189,8 +199,8 @@ export const Button = styled.button<ButtonProps>`
  */
 export const IconButton = styled(Button)`
   padding: ${({ theme }) => theme.spacing.sm};
-  width: ${({ size = 'md' }) => 
-    size === 'sm' ? '32px' : size === 'lg' ? '48px' : '40px'};
-  height: ${({ size = 'md' }) => 
-    size === 'sm' ? '32px' : size === 'lg' ? '48px' : '40px'};
+  width: ${({ $size = 'md' }) => 
+    $size === 'sm' ? '32px' : $size === 'lg' ? '48px' : '40px'};
+  height: ${({ $size = 'md' }) => 
+    $size === 'sm' ? '32px' : $size === 'lg' ? '48px' : '40px'};
 `;

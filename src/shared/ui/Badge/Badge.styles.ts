@@ -11,7 +11,16 @@ type BadgeVariant = 'default' | 'success' | 'error' | 'warning' | 'info' | 'open
 type BadgeSize = 'sm' | 'md' | 'lg';
 
 /**
- * Badge Props
+ * Badge Props for styled-component
+ * Using transient props ($) to prevent them from being passed to DOM
+ */
+export type StyledBadgeProps = {
+  $variant?: BadgeVariant;
+  $size?: BadgeSize;
+};
+
+/**
+ * Badge Props for React component
  */
 export type BadgeProps = {
   variant?: BadgeVariant;
@@ -89,7 +98,7 @@ const getSizeStyles = (size: BadgeSize) => {
 /**
  * Badge Component
  */
-export const Badge = styled.span<BadgeProps>`
+export const Badge = styled.span<StyledBadgeProps>`
   /* Base styles */
   display: inline-flex;
   align-items: center;
@@ -103,8 +112,8 @@ export const Badge = styled.span<BadgeProps>`
   border-radius: ${({ theme }) => theme.borderRadius.full};
   
   /* Variant styles */
-  ${({ variant = 'default' }) => getVariantStyles(variant)}
+  ${({ $variant = 'default' }) => getVariantStyles($variant)}
 
   /* Size styles */
-  ${({ size = 'md' }) => getSizeStyles(size)}
+  ${({ $size = 'md' }) => getSizeStyles($size)}
 `;

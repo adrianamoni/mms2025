@@ -15,8 +15,8 @@ export const Badge: FC<BadgeProps> = ({
 }) => {
   return (
     <S.Badge
-      variant={variant}
-      size={size}
+      $variant={variant}
+      $size={size}
       {...props}
     >
       {children}

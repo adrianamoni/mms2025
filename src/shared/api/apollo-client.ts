@@ -35,9 +35,17 @@ const cache = new InMemoryCache({
             return incoming;
           },
         },
+        repository: {
+          // Custom merge function for repository field
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
       },
     },
     Repository: {
+      // Disable normalization for Repository to avoid keyFields errors
+      keyFields: false,
       fields: {
         issues: {
           // Include 'after' cursor in key to cache each page separately

@@ -17,9 +17,9 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <S.Button
-      variant={variant}
-      size={size}
-      fullWidth={fullWidth}
+      $variant={variant}
+      $size={size}
+      $fullWidth={fullWidth}
       disabled={disabled}
       {...props}
     >

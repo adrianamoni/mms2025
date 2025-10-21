@@ -3,6 +3,7 @@ import { useSearchIssues } from '../hooks/useSearchIssues';
 import type { IssueState } from '@/shared/api/github-queries';
 import { Button } from '@/shared/ui/Button/Button';
 import { Badge } from '@/shared/ui/Badge/Badge';
+import { IssueCardSkeleton } from './IssueCardSkeleton/IssueCardSkeleton';
 import { getContrastColor, formatDate } from '@/shared/utils/styling';
 import * as S from './IssueSearchDemo.styles';
 
@@ -85,11 +86,13 @@ export const IssueSearchDemo: React.FC = () => {
         {isFetching && ' (loading...)'}
       </S.ResultsCount>
 
-      {/* Loading State */}
+      {/* Loading State - Show skeleton cards */}
       {isLoading && (
-        <S.LoadingContainer>
-          <p>Loading issues...</p>
-        </S.LoadingContainer>
+        <S.IssuesList>
+          {Array.from({ length: 8 }).map((_, index) => (
+            <IssueCardSkeleton key={index} />
+          ))}
+        </S.IssuesList>
       )}
 
       {/* Issues List */}
