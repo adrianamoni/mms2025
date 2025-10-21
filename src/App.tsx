@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { env } from '@/shared/config/env'
 import { AppProviders } from '@/app/providers/AppProviders'
+import { IssueSearchDemo } from '@/features/search-issues/components/IssueSearchDemo'
 
 function App() {
   return (
@@ -14,7 +15,34 @@ function App() {
 }
 
 function AppContent() {
+  const [showDemo, setShowDemo] = useState(false);
   const [count, setCount] = useState(0)
+
+  // If demo is active, show the Issue Search Demo
+  if (showDemo) {
+    return (
+      <div>
+        <button 
+          onClick={() => setShowDemo(false)}
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            zIndex: 1000
+          }}
+        >
+          ← Back to Config
+        </button>
+        <IssueSearchDemo />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,6 +78,23 @@ function AppContent() {
           <strong>✅ TanStack Query:</strong> Advanced caching and state management<br/>
           <strong>✅ Environment:</strong> Variables loaded and validated
         </div>
+        <button 
+          onClick={() => setShowDemo(true)}
+          style={{
+            marginTop: '20px',
+            padding: '12px 24px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          🚀 Try Issue Search Demo
+        </button>
       </div>
     </>
   )

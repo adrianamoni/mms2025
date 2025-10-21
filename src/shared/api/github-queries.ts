@@ -27,14 +27,12 @@ export const SEARCH_ISSUES = gql`
     $first: Int!
     $after: String
     $states: [IssueState!]
-    $query: String
   ) {
     repository(owner: $owner, name: $name) {
       issues(
         first: $first
         after: $after
         states: $states
-        filterBy: { query: $query }
         orderBy: { field: UPDATED_AT, direction: DESC }
       ) {
         totalCount
@@ -66,6 +64,64 @@ export const SEARCH_ISSUES = gql`
             }
             comments {
               totalCount
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// GraphQL query to search issues by text using GitHub Search API
+export const SEARCH_ISSUES_BY_TEXT = gql`
+  query SearchIssuesByText(
+    $query: String!
+    $first: Int!
+    $after: String
+    $type: SearchType!
+  ) {
+    search(
+      query: $query
+      type: $type
+      first: $first
+      after: $after
+    ) {
+      issueCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      edges {
+        node {
+          ... on Issue {
+            id
+            number
+            title
+            body
+            state
+            createdAt
+            updatedAt
+            author {
+              login
+              avatarUrl
+            }
+            labels(first: 10) {
+              nodes {
+                id
+                name
+                color
+              }
+            }
+            comments {
+              totalCount
+            }
+            repository {
+              name
+              owner {
+                login
+              }
             }
           }
         }
