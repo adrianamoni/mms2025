@@ -183,8 +183,10 @@ export function useSearchIssues() {
         ...prev,
         cursor: pageInfo.endCursor!,
       }));
+      // Trigger refetch after updating cursor
+      setTimeout(() => refetch(), 0);
     }
-  }, [pageInfo]);
+  }, [pageInfo, refetch]);
 
   // Load previous page
   const loadPreviousPage = useCallback(() => {
@@ -193,8 +195,10 @@ export function useSearchIssues() {
         ...prev,
         cursor: pageInfo.startCursor!,
       }));
+      // Trigger refetch after updating cursor
+      setTimeout(() => refetch(), 0);
     }
-  }, [pageInfo]);
+  }, [pageInfo, refetch]);
 
   // Reset all filters
   const resetFilters = useCallback(() => {
